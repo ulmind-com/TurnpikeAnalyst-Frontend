@@ -1,0 +1,69 @@
+.scroll-stack {
+  position: relative;
+  width: 100%;
+}
+
+.scroll-stack--window {
+  width: 100%;
+  position: relative;
+  background: transparent;
+}
+
+.scroll-stack--contained {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+.scroll-stack__inner {
+  position: relative;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-inline: clamp(1rem, 4%, 2.5rem);
+}
+
+.scroll-stack__slot {
+  position: sticky;
+  width: 100%;
+}
+
+.scroll-stack-card {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 20rem;
+  padding: 2.25rem;
+  border-radius: 28px;
+  background: #ffffff;
+  color: #18181b;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 -12px 40px -16px rgba(0, 0, 0, 0.15),
+    0 24px 48px -24px rgba(0, 0, 0, 0.2);
+  transform-origin: 50% 0;
+  will-change: transform;
+  overflow: hidden;
+}
+
+:is(.dark) .scroll-stack-card {
+  background: #131418;
+  color: #fafafa;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 -12px 40px -16px rgba(0, 0, 0, 0.5),
+    0 24px 48px -24px rgba(0, 0, 0, 0.6);
+}
+
+.scroll-stack-card__shade {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #000;
+  opacity: var(--scroll-stack-dim, 0);
+  pointer-events: none;
+  transition: opacity 0.15s ease-out;
+}
+

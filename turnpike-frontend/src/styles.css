@@ -1,0 +1,19 @@
+/* Tailwind entry for the public site.
+ *
+ * Webfonts are linked from the document head rather than imported here: a CSS
+ * @import makes the browser fetch this sheet before it can even discover the
+ * font request, serializing two round trips before the first paint.
+ *
+ * Both @source globs are required. Tailwind only emits the utilities it can
+ * see in scanned files, and roughly half the markup this app renders lives in
+ * the shared package.
+ */
+@import "tailwindcss" source(none);
+@plugin "@tailwindcss/typography";
+@source "./";
+@source "../../packages/shared/src";
+@import "tw-animate-css";
+
+/* The design system itself — tokens, base layer and custom utilities —
+   shared verbatim with the admin console. */
+@import "@turnpike/shared/styles/tokens.css";

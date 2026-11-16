@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bespoke Architecture Studio</title>
+  
+  <!-- Google Fonts Geist -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Geist', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Geist', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #171717;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cubic-ease {
+      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hamburger-btn:hover .h-line {
+      width: 1.25rem !important; /* w-5 */
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-white overflow-hidden text-neutral-900 select-none">
+
+  <!-- ═══════════════════════════════════════
+       1) NAVBAR (FIXED TOP BAR)
+       ═══════════════════════════════════════ -->
+  <header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 md:px-10 py-4 sm:py-5 bg-white/90 backdrop-blur-xs">
+    
+    <!-- LEFT: Geometric Logo SVG (28x28) -->
+    <a href="#" class="inline-flex items-center" aria-label="Bespoke Architecture Studio Home">
+      <svg width="28" height="28" viewBox="0 0 256 256" fill="#1a1a1a" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 144 256 L 27.598 256 L 144 139.598 Z M 256 207.5 L 200 256 L 200 56 L 0 56 L 48 0 L 256 0 Z M 0 204.402 L 0 112 L 92.402 112 Z" />
+      </svg>
+    </a>
+
+    <!-- CENTER: Absolutely centered 2-line hamburger button -->
+    <button id="open-menu-btn" type="button" aria-label="Open menu" class="hamburger-btn absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-[5px] p-2 cursor-pointer">
+      <span class="h-line block w-6 h-[1.5px] bg-neutral-900 rounded-full transition-all duration-300"></span>
+      <span class="h-line block w-6 h-[1.5px] bg-neutral-900 rounded-full transition-all duration-300"></span>
+    </button>
+
+    <!-- RIGHT: CTA link (hidden on mobile, visible sm+) -->
+    <div class="flex items-center">
+      <a href="#" class="hidden sm:inline-flex text-sm font-medium text-white bg-neutral-900 rounded-full px-5 py-2.5 hover:bg-neutral-800 transition-colors">
+        Book a meeting
+      </a>
+      <!-- Mobile spacer to balance logo -->
+      <div class="w-7 sm:hidden"></div>
+    </div>
+  </header>
+
+  <!-- OVERLAY (Backdrop blur) -->
+  <div id="menu-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-all duration-500 cubic-ease"></div>
+
+  <!-- DRAWER / FULL-SCREEN MENU -->
+  <!-- Mobile: full-screen slide up | Desktop: right drawer max-w-sm slide from right -->
+  <aside id="menu-drawer" class="fixed z-[70] bg-white transition-all duration-500 cubic-ease
+    inset-0 opacity-0 translate-y-full 
+    sm:inset-y-0 sm:left-auto sm:right-0 sm:w-full sm:max-w-sm sm:h-full sm:translate-y-0 sm:translate-x-full">
+    
+    <div class="h-full flex flex-col justify-between p-6 sm:p-8">
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between">
+        <svg width="28" height="28" viewBox="0 0 256 256" fill="#1a1a1a" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 144 256 L 27.598 256 L 144 139.598 Z M 256 207.5 L 200 256 L 200 56 L 0 56 L 48 0 L 256 0 Z M 0 204.402 L 0 112 L 92.402 112 Z" />
+        </svg>
+
+        <!-- Close Button (Morphs into X) -->
+        <button id="close-menu-btn" type="button" aria-label="Close menu" class="relative w-10 h-10 rounded-full flex items-center justify-center hover:bg-neutral-100 transition-colors cursor-pointer">
+          <span id="close-line-a" class="absolute w-5 h-[1.5px] bg-neutral-900 rounded-full transition-all duration-500 cubic-ease -translate-y-[3px] rotate-0"></span>
+          <span id="close-line-b" class="absolute w-5 h-[1.5px] bg-neutral-900 rounded-full transition-all duration-500 cubic-ease translate-y-[3px] rotate-0"></span>
+        </button>
+      </div>
+
+      <!-- Menu Links (Staggered Entrance) -->
+      <nav class="flex flex-col py-10">
+        <a href="#" class="menu-nav-link text-3xl font-medium text-neutral-900 py-3 hover:text-neutral-500 transition-all duration-500 cubic-ease opacity-0 translate-x-8" style="transition-delay: 150ms;">Work</a>
+        <a href="#" class="menu-nav-link text-3xl font-medium text-neutral-900 py-3 hover:text-neutral-500 transition-all duration-500 cubic-ease opacity-0 translate-x-8" style="transition-delay: 210ms;">Index</a>
+        <a href="#" class="menu-nav-link text-3xl font-medium text-neutral-900 py-3 hover:text-neutral-500 transition-all duration-500 cubic-ease opacity-0 translate-x-8" style="transition-delay: 270ms;">Events</a>
+        <a href="#" class="menu-nav-link text-3xl font-medium text-neutral-900 py-3 hover:text-neutral-500 transition-all duration-500 cubic-ease opacity-0 translate-x-8" style="transition-delay: 330ms;">Projects</a>
+      </nav>
+
+      <!-- Drawer CTA Below Links (pt-12) -->
+      <div class="pt-12 pb-4">
+        <a id="drawer-cta" href="#" class="inline-block text-sm font-medium text-white bg-neutral-900 rounded-full px-6 py-3 hover:bg-neutral-800 transition-all duration-500 cubic-ease opacity-0 translate-y-4" style="transition-delay: 400ms;">
+          Book a meeting
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════
+       2) HERO CONTENT
+       ═══════════════════════════════════════ -->
+  <section class="pt-24 sm:pt-28 pb-1 text-center px-4 sm:px-6">
+    <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-semibold tracking-tight text-neutral-900 leading-[1.05] max-w-3xl mx-auto">
+      Bespoke Architecture<br />Studio
+    </h1>
+    <p class="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-neutral-900 max-w-xl mx-auto leading-relaxed">
+      The building you deserve has never been built before.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       3) IMAGE MARQUEE (INFINITE DRAG-ENABLED STRIP)
+       ═══════════════════════════════════════ -->
+  <section class="relative py-4 overflow-hidden select-none">
+    
+    <!-- TOP CURVED WHITE MASK -->
+    <div class="pointer-events-none absolute top-0 left-0 right-0 h-[80px] sm:h-[100px] z-10">
+      <svg viewBox="0 0 1440 100" preserveAspectRatio="none" class="w-full h-full fill-white">
+        <path d="M0 0H1440V50C1440 50 1200 100 720 100C240 100 0 50 0 50V0Z" />
+      </svg>
+    </div>
+
+    <!-- BOTTOM CURVED WHITE MASK (MIRROR) -->
+    <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-[80px] sm:h-[100px] z-10">
+      <svg viewBox="0 0 1440 100" preserveAspectRatio="none" class="w-full h-full fill-white">
+        <path d="M0 100H1440V50C1440 50 1200 0 720 0C240 0 0 50 0 50V100Z" />
+      </svg>
+    </div>
+
+    <!-- MARQUEE TRACK (Drag + Inertia + Seamless Wrap) -->
+    <div id="marquee-container" class="cursor-grab active:cursor-grabbing w-full overflow-hidden">
+      <div id="marquee-track" class="flex w-max gap-3 sm:gap-4 py-4 will-change-transform">
+        
+        <!-- SLIDE 1 -->
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120544_94be5de4-0f4f-494c-bb78-c532290040a6.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120601_5c6e4705-b992-4227-9dff-9b000351c283.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120619_7bc65416-a3d7-4e8c-9929-743f233378fe.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <!-- SLIDE 4 -->
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120627_b40a97b0-c5fa-408c-a77e-dc8fa44f8584.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <!-- SLIDE 5 -->
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120635_515cde41-2dc6-48ce-a236-088a5bc74ca8.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <!-- SLIDE 6 -->
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120645_5a1170c6-145b-477b-abd2-f8620acccd8d.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <!-- DUPLICATED SLIDES (Exact order for seamless 50% wrap) -->
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120544_94be5de4-0f4f-494c-bb78-c532290040a6.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120601_5c6e4705-b992-4227-9dff-9b000351c283.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120619_7bc65416-a3d7-4e8c-9929-743f233378fe.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120627_b40a97b0-c5fa-408c-a77e-dc8fa44f8584.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120635_515cde41-2dc6-48ce-a236-088a5bc74ca8.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+        <div class="w-60 h-80 sm:w-80 sm:h-[32rem] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260725_120645_5a1170c6-145b-477b-abd2-f8620acccd8d.png&w=1920&q=85" 
+               alt="" draggable="false" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       4) BOTTOM SECTION
+       ═══════════════════════════════════════ -->
+  <section class="text-center px-4 sm:px-6 pt-2 pb-12 sm:pb-16 max-w-2xl mx-auto">
+    <p class="text-base sm:text-lg md:text-xl text-neutral-900 leading-relaxed">
+      We design private residences and commercial spaces from a blank page. No templates, no repeated floorplans, no shortcuts.
+    </p>
+
+    <!-- Two Underlined Text Links -->
+    <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+      <a href="#" class="text-neutral-900 font-semibold underline underline-offset-4 decoration-neutral-400 hover:decoration-neutral-900 transition-colors">
+        Book a meeting
+      </a>
+      <a href="#" class="text-neutral-900 font-semibold underline underline-offset-4 decoration-neutral-400 hover:decoration-neutral-900 transition-colors">
+        See Projects
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       INTERACTION SCRIPT (DRAWER & rAF MARQUEE)
+       ═══════════════════════════════════════ -->
+  <script>
+    (function() {
+      // ----------------------------------------------------
+      // 1. DRAWER & MENU INTERACTIONS
+      // ----------------------------------------------------
+      const openBtn = document.getElementById('open-menu-btn');
+      const closeBtn = document.getElementById('close-menu-btn');
+      const overlay = document.getElementById('menu-overlay');
+      const drawer = document.getElementById('menu-drawer');
+      const closeLineA = document.getElementById('close-line-a');
+      const closeLineB = document.getElementById('close-line-b');
+      const navLinks = document.querySelectorAll('.menu-nav-link');
+      const drawerCta = document.getElementById('drawer-cta');
+
+      function openMenu() {
+        document.body.style.overflow = 'hidden';
+        
+        // Show overlay
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        overlay.classList.add('opacity-100', 'pointer-events-auto');
+
+        // Show drawer (Mobile: translate-y-0, Desktop: sm:translate-x-0)
+        drawer.classList.remove('opacity-0', 'translate-y-full', 'sm:translate-x-full');
+        drawer.classList.add('opacity-100', 'translate-y-0', 'sm:translate-x-0');
+
+        // Morph close button into X
+        closeLineA.classList.remove('-translate-y-[3px]', 'rotate-0');
+        closeLineA.classList.add('rotate-45');
+        closeLineB.classList.remove('translate-y-[3px]', 'rotate-0');
+        closeLineB.classList.add('-rotate-45');
+
+        // Animate staggered nav links
+        navLinks.forEach(link => {
+          link.classList.remove('opacity-0', 'translate-x-8');
+          link.classList.add('opacity-100', 'translate-x-0');
+        });
+
+        // Animate CTA
+        drawerCta.classList.remove('opacity-0', 'translate-y-4');
+        drawerCta.classList.add('opacity-100', 'translate-y-0');
+      }
+
+      function closeMenu() {
+        document.body.style.overflow = '';
+
+        // Hide overlay
+        overlay.classList.remove('opacity-100', 'pointer-events-auto');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+
+        // Hide drawer
+        drawer.classList.remove('opacity-100', 'translate-y-0', 'sm:translate-x-0');
+        drawer.classList.add('opacity-0', 'translate-y-full', 'sm:translate-x-full');
+
+        // Morph close button back
+        closeLineA.classList.remove('rotate-45');
+        closeLineA.classList.add('-translate-y-[3px]', 'rotate-0');
+        closeLineB.classList.remove('-rotate-45');
+        closeLineB.classList.add('translate-y-[3px]', 'rotate-0');
+
+        // Reset nav links
+        navLinks.forEach(link => {
+          link.classList.remove('opacity-100', 'translate-x-0');
+          link.classList.add('opacity-0', 'translate-x-8');
+        });
+
+        // Reset CTA
+        drawerCta.classList.remove('opacity-100', 'translate-y-0');
+        drawerCta.classList.add('opacity-0', 'translate-y-4');
+      }
+
+      openBtn.addEventListener('click', openMenu);
+      closeBtn.addEventListener('click', closeMenu);
+      overlay.addEventListener('click', closeMenu);
+      navLinks.forEach(link => link.addEventListener('click', closeMenu));
+
+      // ----------------------------------------------------
+      // 2. REQUEST ANIMATION FRAME MARQUEE ENGINE (DRAG + INERTIA)
+      // ----------------------------------------------------
+      const container = document.getElementById('marquee-container');
+      const track = document.getElementById('marquee-track');
+
+      const SPEED = 0.8; // px per frame auto-scroll
+      let offset = 0;
+      let velocity = 0;
+      let isDragging = false;
+      let dragStartX = 0;
+      let dragStartOffset = 0;
+      let lastClientX = 0;
+      let lastTime = 0;
+
+      // Pointer drag interaction with setPointerCapture
+      container.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        velocity = 0;
+        dragStartX = e.clientX;
+        dragStartOffset = offset;
+        lastClientX = e.clientX;
+        lastTime = performance.now();
+        container.setPointerCapture(e.pointerId);
+        container.classList.remove('cursor-grab');
+        container.classList.add('cursor-grabbing');
+      });
+
+      container.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const now = performance.now();
+        const dt = Math.max(1, now - lastTime);
+        const dx = e.clientX - lastClientX;
+        
+        velocity = (dx / dt) * 16; // normalize to ~60fps
+        lastClientX = e.clientX;
+        lastTime = now;
+
+        offset = dragStartOffset + (e.clientX - dragStartX);
+      });
+
+      function stopDragging(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        try {
+          container.releasePointerCapture(e.pointerId);
+        } catch (_) {}
+        container.classList.remove('cursor-grabbing');
+        container.classList.add('cursor-grab');
+      }
+
+      container.addEventListener('pointerup', stopDragging);
+      container.addEventListener('pointercancel', stopDragging);
+
+      // Animation loop
+      function tick() {
+        const halfWidth = track.scrollWidth / 2;
+
+        if (isDragging) {
+          // While dragging, offset is calculated from pointermove
+        } else {
+          // Inertia coasting & auto-scroll
+          if (Math.abs(velocity) > 0.1) {
+            offset += velocity;
+            velocity *= 0.95; // momentum decay
+          } else {
+            velocity = 0;
+            offset -= SPEED; // resume left auto-scroll
+          }
+        }
+
+        // Seamless wrap around half-width
+        if (halfWidth > 0) {
+          if (offset <= -halfWidth) {
+            offset += halfWidth;
+            if (isDragging) dragStartOffset += halfWidth;
+          } else if (offset > 0) {
+            offset -= halfWidth;
+            if (isDragging) dragStartOffset -= halfWidth;
+          }
+        }
+
+        track.style.transform = `translate3d(${offset}px, 0, 0)`;
+        requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
+

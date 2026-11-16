@@ -1,0 +1,10 @@
+{
+  "name": "turnpike-frontend-repo",
+  "private": true,
+  "type": "module",
+  "workspaces": ["turnpike-frontend", "packages/*"],
+  "scripts": {
+    "dev": "bun --filter turnpike-frontend dev",
+    "build": "bun --filter turnpike-frontend build"
+  }
+}

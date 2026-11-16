@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KV — Freight Services Scroll Hero</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --u: min(100vw / 1440, 100vh / 960);
+      --white: #ffffff;
+      --ink: #111111;
+      --band: #111111;
+      --cobalt: #2f63ff;
+      --letters: #e9e9e9;
+      --edge-px: 50vh;
+      --ph: 0;
+    }
+
+    @media (max-width: 768px), (orientation: portrait) {
+      :root {
+        --u: min(100vw / 430, 1.4px);
+      }
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      background: var(--white);
+      color: var(--ink);
+      font-family: 'Archivo', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Track ── */
+    .track {
+      position: relative;
+      width: 100%;
+      background: var(--white);
+    }
+
+    /* ── Nav (Scrolls away) ── */
+    .nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: calc(84 * var(--u));
+      padding: 0 calc(48 * var(--u));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 50;
+      pointer-events: auto;
+    }
+
+    .nav-logo {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 600;
+      font-size: calc(30 * var(--u));
+      letter-spacing: -0.06em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: calc(32 * var(--u));
+    }
+
+    .nav-link {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 500;
+      font-size: calc(10 * var(--u));
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--cobalt);
+    }
+
+    .nav-pill {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 500;
+      font-size: calc(10 * var(--u));
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+      text-decoration: none;
+      padding: calc(7 * var(--u)) calc(16 * var(--u));
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-pill:hover {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    /* ── Sticky Scene ── */
+    .scene {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100lvh;
+      overflow: hidden;
+      background: var(--white);
+    }
+
+    /* Dual background: white above edge, band below edge */
+    .scene-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: linear-gradient(
+        to bottom,
+        var(--white) 0px,
+        var(--white) var(--edge-px),
+        var(--band) var(--edge-px),
+        var(--band) 100%
+      );
+    }
+
+    /* ── Layer 1: Video ── */
+    .video-wrap {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .scrub-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ── Layer 2: Giant Letters ("OUR SERVICES") ── */
+    .letters-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--edge-px);
+      z-index: 5;
+      pointer-events: none;
+      overflow: visible;
+      mix-blend-mode: darken;
+    }
+
+    .giant-letters {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      white-space: nowrap;
+      font-family: 'Anton', sans-serif;
+      font-size: calc(330 * var(--u));
+      line-height: 0.8;
+      color: var(--letters);
+      transform: translateX(100vw);
+      will-change: transform;
+      user-select: none;
+    }
+
+    /* ── Layer 3: Speed Readout ── */
+    .speed-readout {
+      position: absolute;
+      top: calc(52 * var(--u));
+      left: calc(26 * var(--u));
+      font-family: 'JetBrains Mono', monospace;
+      font-size: calc(10.5 * var(--u));
+      color: var(--ink);
+      z-index: 20;
+      opacity: var(--ph);
+      transition: opacity 0.3s;
+      pointer-events: none;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Layer 4: Dark Band & Sliding Strip ── */
+    .band-wrap {
+      position: absolute;
+      top: var(--edge-px);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--band);
+      z-index: 10;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+    }
+
+    .strip {
+      position: absolute;
+      top: calc(76 * var(--u));
+      left: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: calc(120 * var(--u));
+      transform: translateX(100vw);
+      will-change: transform;
+      color: var(--white);
+    }
+
+    /* Lead Block */
+    .lead-block {
+      display: flex;
+      align-items: flex-start;
+      gap: calc(64 * var(--u));
+      flex-shrink: 0;
+    }
+
+    .lead-headline {
+      font-family: 'Anton', sans-serif;
+      font-size: calc(64 * var(--u));
+      line-height: 0.98;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--white);
+    }
+
+    .lead-headline .cobalt {
+      color: var(--cobalt);
+    }
+
+    .lead-copy {
+      width: calc(250 * var(--u));
+      display: flex;
+      flex-direction: column;
+      gap: calc(16 * var(--u));
+      font-family: 'Archivo', sans-serif;
+      font-size: calc(12 * var(--u));
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.62);
+    }
+
+    /* Five Cards */
+    .card {
+      width: calc(270 * var(--u));
+      padding-left: calc(30 * var(--u));
+      padding-right: calc(30 * var(--u));
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: calc(20 * var(--u));
+    }
+
+    .card:first-child {
+      border-left: none;
+      padding-left: 0;
+    }
+
+    .card-icon {
+      width: calc(38 * var(--u));
+      height: calc(38 * var(--u));
+      color: var(--white);
+    }
+
+    .card-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Gradient reveal text sweep */
+    .card-title {
+      font-family: 'Anton', sans-serif;
+      font-size: calc(26 * var(--u));
+      line-height: 1.05;
+      text-transform: uppercase;
+      background: linear-gradient(
+        90deg,
+        #ffffff 0%,
+        #ffffff calc(var(--s, 0%) - 34%),
+        #2f63ff calc(var(--s, 0%) - 6%),
+        transparent calc(var(--s, 0%) + 26%),
+        transparent 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .card-body {
+      font-family: 'Archivo', sans-serif;
+      font-size: calc(12.4 * var(--u));
+      line-height: 1.5;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.9) calc(var(--s, 0%) - 34%),
+        #2f63ff calc(var(--s, 0%) - 6%),
+        transparent calc(var(--s, 0%) + 26%),
+        transparent 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    /* Outline Pill "Our services" */
+    .services-pill {
+      position: absolute;
+      bottom: calc(36 * var(--u));
+      left: 50%;
+      transform: translateX(-50%) translateY(calc((1 - var(--ph)) * 24px));
+      opacity: var(--ph);
+      transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 500;
+      font-size: calc(10 * var(--u));
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      padding: calc(8 * var(--u)) calc(22 * var(--u));
+      pointer-events: auto;
+      text-decoration: none;
+    }
+
+    .services-pill:hover {
+      border-color: var(--white);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* ── Phone Overrides ── */
+    @media (max-width: 768px), (orientation: portrait) {
+      .giant-letters {
+        font-size: calc(180 * var(--u));
+      }
+      .speed-readout {
+        top: 22px;
+        left: 20px;
+        font-size: 11px;
+      }
+      .nav-right .nav-link:not(.nav-pill) {
+        display: none;
+      }
+      .strip {
+        top: calc(44 * var(--u));
+        gap: calc(56 * var(--u));
+        padding-left: 22px;
+      }
+      .lead-block {
+        flex-direction: column;
+        gap: calc(20 * var(--u));
+      }
+      .lead-headline {
+        font-size: calc(46 * var(--u));
+      }
+      .lead-copy {
+        width: 300px;
+        font-size: 13px;
+      }
+      .card {
+        width: 250px;
+      }
+      .card-title {
+        font-size: 26px;
+      }
+      .card-body {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="track" id="track">
+    <!-- Top Nav -->
+    <header class="nav">
+      <a href="#" class="nav-logo">KV</a>
+      <div class="nav-right">
+        <a href="#menu" class="nav-link">→ Menu</a>
+        <a href="#follow" class="nav-link">Follow</a>
+        <a href="#work" class="nav-pill">Work with us</a>
+      </div>
+    </header>
+
+    <!-- Sticky Viewport Scene -->
+    <div class="scene" id="scene">
+      <!-- Background Line -->
+      <div class="scene-bg"></div>
+
+      <!-- Layer 1: Video -->
+      <div class="video-wrap" id="video-wrap">
+        <video
+          id="scrub-video"
+          class="scrub-video"
+          playsinline
+          webkit-playsinline
+          muted
+          preload="auto"
+          poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/2307e4bf-be39-42b4-b579-e168aeccabf0.jpg"
+        >
+          <source
+            media="(min-width: 901px)"
+            src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/409763c0-95f4-49d3-a601-dc564d55072b.mp4"
+            type="video/mp4"
+          >
+          <source
+            src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/b3718419-7a0a-478d-bfb0-0ff8bef7f3f7.mp4"
+            type="video/mp4"
+          >
+        </video>
+      </div>
+
+      <!-- Layer 2: Giant Letters ("OUR SERVICES") with mix-blend-mode: darken -->
+      <div class="letters-wrap" id="letters-wrap">
+        <div class="giant-letters" id="giant-letters">OUR SERVICES</div>
+      </div>
+
+      <!-- Layer 3: Speed Readout -->
+      <div class="speed-readout" id="speed-readout">00 KM/H</div>
+
+      <!-- Layer 4: Dark Band with Sliding Strip -->
+      <div class="band-wrap" id="band-wrap">
+        <div class="strip" id="strip">
+          <!-- Lead Block -->
+          <div class="lead-block">
+            <h2 class="lead-headline">
+              EVERYTHING YOUR<br>
+              FREIGHT NEEDS.<br>
+              <span class="cobalt">UNDER ONE GROUP.</span>
+            </h2>
+            <div class="lead-copy">
+              <p>From air to sea, from customs clearance to the last mile, we bring decades of practice to every freight discipline.</p>
+              <p>One integrated network means one partner, one point of contact and full visibility from origin to destination.</p>
+            </div>
+          </div>
+
+          <!-- Card 1: Air Freight -->
+          <div class="card" data-card>
+            <div class="card-icon">
+              <!-- Airplane Icon -->
+              <svg viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.6-.1-1.2.1-1.6.5l-.7.7c-.5.5-.4 1.3.2 1.7L8 13.5 5.5 16 3 15.5l-1 .5 2 2 2 2 .5-1-.5-2.5 2.5-2.5 3.9 4.8c.4.6 1.2.7 1.7.2l.7-.7c.4-.4.6-1 .5-1.6z"/></svg>
+            </div>
+            <h3 class="card-title">Air<br>freight</h3>
+            <p class="card-body">Express, priority and deferred options across global lanes, booked and tracked end to end.</p>
+          </div>
+
+          <!-- Card 2: Ocean Freight -->
+          <div class="card" data-card>
+            <div class="card-icon">
+              <!-- Ship Icon -->
+              <svg viewBox="0 0 24 24"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 6M12 4v6M10 7h4"/></svg>
+            </div>
+            <h3 class="card-title">Ocean<br>freight</h3>
+            <p class="card-body">FCL and LCL sailings on every major trade lane, with carrier choice based on cost and transit time.</p>
+          </div>
+
+          <!-- Card 3: Customs Brokerage -->
+          <div class="card" data-card>
+            <div class="card-icon">
+              <!-- Document with Check Icon -->
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
+            </div>
+            <h3 class="card-title">Customs<br>brokerage</h3>
+            <p class="card-body">Licensed in-house brokers for classification, duties and inspections, so goods clear first time.</p>
+          </div>
+
+          <!-- Card 4: Warehousing and 3PL -->
+          <div class="card" data-card>
+            <div class="card-icon">
+              <!-- Warehouse Icon -->
+              <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <h3 class="card-title">Warehousing<br>and 3PL</h3>
+            <p class="card-body">Bonded and general storage, pick and pack, and distribution that plugs straight into transport.</p>
+          </div>
+
+          <!-- Card 5: Project Cargo -->
+          <div class="card" data-card>
+            <div class="card-icon">
+              <!-- Crane Hook Icon -->
+              <svg viewBox="0 0 24 24"><path d="M12 2v6m-4 5a4 4 0 0 0 8 0v-2H8v2zm4 7v3M8 21h8"/></svg>
+            </div>
+            <h3 class="card-title">Project<br>cargo</h3>
+            <p class="card-body">Oversized and heavy-lift moves, engineered, permitted and escorted from factory to foundation.</p>
+          </div>
+        </div>
+
+        <!-- Outline Pill -->
+        <a href="#services" class="services-pill">Our services</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const track = document.getElementById('track');
+      const video = document.getElementById('scrub-video');
+      const letters = document.getElementById('giant-letters');
+      const speedEl = document.getElementById('speed-readout');
+      const strip = document.getElementById('strip');
+      const cards = document.querySelectorAll('[data-card]');
+
+      const A = 2.4; // 2.4 viewports for clip
+      let B = 2.5;   // Calculated dynamically based on strip width
+      let duration = 4.04;
+      let targetTime = 0;
+      let curTime = 0;
+      let isSeeking = false;
+      let lastScrollY = window.scrollY;
+      let lastTime = performance.now();
+      let smoothedSpeed = 0;
+
+      // Layout & Sizing
+      function updateLayout() {
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+        const isNarrow = vw <= 768 || vw <= vh;
+
+        // Measure strip width
+        const stripWidth = strip.scrollWidth;
+        B = ((stripWidth + 0.45 * vw) / vw) * 1.1;
+
+        // Set Track Height: (1 + A + B) * vh
+        const totalHeight = (1 + A + B) * vh;
+        track.style.height = `${totalHeight}px`;
+
+        // Video Sizing & Edge calculation
+        let clipTop = 0, clipHeight = vh;
+
+        if (isNarrow) {
+          // Narrow: width 155vw, positioned so final band edge lands at 36% viewport
+          const videoWidth = vw * 1.55;
+          const videoHeight = videoWidth * (1080 / 1920);
+          clipHeight = videoHeight;
+          // final band edge in video is 0.448 * height
+          // we want clipTop + 0.448 * clipHeight = 0.36 * vh
+          clipTop = 0.36 * vh - 0.448 * clipHeight;
+          video.style.width = `${videoWidth}px`;
+          video.style.height = `${videoHeight}px`;
+          video.style.left = `${(vw - videoWidth) * 0.4}px`;
+          video.style.top = `${clipTop}px`;
+          video.style.transform = 'none';
+        } else {
+          // Cover: scale = max(vw / 1920, vh / 1080)
+          const scale = Math.max(vw / 1920, vh / 1080);
+          const videoWidth = 1920 * scale;
+          const videoHeight = 1080 * scale;
+          clipHeight = videoHeight;
+          clipTop = (vh - videoHeight) / 2;
+          video.style.width = `${videoWidth}px`;
+          video.style.height = `${videoHeight}px`;
+          video.style.left = '50%';
+          video.style.top = '50%';
+          video.style.transform = 'translate(-50%, -50%)';
+        }
+
+        // Final Band Edge in pixels
+        const edgePx = clipTop + 0.448 * clipHeight;
+        document.documentElement.style.setProperty('--edge-px', `${Math.round(edgePx)}px`);
+      }
+
+      window.addEventListener('resize', updateLayout);
+      video.addEventListener('loadedmetadata', () => {
+        if (video.duration) duration = video.duration;
+        updateLayout();
+      });
+
+      video.addEventListener('seeked', () => {
+        isSeeking = false;
+        if (Math.abs(curTime - video.currentTime) > 1 / 60) {
+          video.currentTime = curTime;
+        }
+      });
+
+      // Frame Seek Logic
+      function seekVideo() {
+        if (!isSeeking && Math.abs(curTime - video.currentTime) > 1 / 60) {
+          isSeeking = true;
+          video.currentTime = curTime;
+        }
+      }
+
+      // Main rAF Render Loop
+      function render(time) {
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+        const sy = window.scrollY;
+
+        // 1. Calculate Scroll Speed (KM/H)
+        const dt = Math.max(1, time - lastTime);
+        const dy = Math.abs(sy - lastScrollY);
+        lastScrollY = sy;
+        lastTime = time;
+
+        const rawSpeed = (dy / dt) / 0.032; // |Δy|/Δt / 32
+        smoothedSpeed += (rawSpeed - smoothedSpeed) * 0.12;
+        const kmh = Math.min(99, Math.round(smoothedSpeed));
+        speedEl.textContent = `${String(kmh).padStart(2, '0')} KM/H`;
+
+        // 2. Video Scrub Progress q: 0 -> 1 over A * vh
+        const q = Math.min(1, Math.max(0, sy / (A * vh)));
+        targetTime = q * (duration - 1 / 48);
+        curTime += (targetTime - curTime) * 0.2;
+        seekVideo();
+
+        // Dynamic ground edge calculation:
+        // - 0s to 3.1s (q <= 0.767): ground is at 82.9% of video (clean white stage)
+        // - 3.1s to 3.75s (0.767 < q < 0.928): ground rises to 44.8%
+        // - >= 3.75s (q >= 0.928): ground sits at 44.8%
+        let bandFraction = 0.829;
+        if (q <= 0.767) {
+          bandFraction = 0.829;
+        } else if (q < 0.928) {
+          const t = (q - 0.767) / (0.928 - 0.767);
+          const easedT = t * t * (3 - 2 * t);
+          bandFraction = 0.829 + (0.448 - 0.829) * easedT;
+        } else {
+          bandFraction = 0.448;
+        }
+        const currentEdgePx = clipTop + bandFraction * clipHeight;
+        document.documentElement.style.setProperty('--edge-px', `${Math.round(currentEdgePx)}px`);
+
+        // Band opacity: only show when truck finishes pulling back and settles
+        const bandWrap = document.getElementById('band-wrap');
+        if (bandWrap) {
+          const bandOpacity = Math.min(1, Math.max(0, (q - 0.85) / 0.09));
+          bandWrap.style.opacity = bandOpacity.toFixed(3);
+          bandWrap.style.pointerEvents = bandOpacity > 0.1 ? 'auto' : 'none';
+        }
+
+        // 3. Settled Flag: q >= 0.94
+        const ph = q >= 0.94 ? 1 : 0;
+        document.documentElement.style.setProperty('--ph', ph);
+
+        // 4. Strip Progress r: 0 -> 1 over B * vh (starts after A * vh)
+        const r = Math.min(1, Math.max(0, (sy - A * vh) / (B * vh)));
+
+        // Giant Letters translateX: vw -> -(lettersWidth + vw)
+        const lettersWidth = letters.offsetWidth;
+        const lettersX = vw - r * (lettersWidth + vw * 0.8);
+        letters.style.transform = `translateX(${lettersX}px)`;
+
+        // Strip translateX: vw -> -(stripWidth + 0.45 * vw)
+        const stripWidth = strip.scrollWidth;
+        const stripX = vw - r * (stripWidth + 0.45 * vw);
+        strip.style.transform = `translateX(${stripX}px)`;
+
+        // 5. Card Text Gradient Sweep: s = clamp((0.98 - cardLeft/vw)/0.3, -0.4, 1.6) * 100%
+        cards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const cardLeftFrac = rect.left / vw;
+          const s = Math.min(1.6, Math.max(-0.4, (0.98 - cardLeftFrac) / 0.3)) * 100;
+          card.style.setProperty('--s', `${s.toFixed(1)}%`);
+        });
+
+        requestAnimationFrame(render);
+      }
+
+      updateLayout();
+      requestAnimationFrame(render);
+
+      // Recorder Mode (?rec=1)
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('rec') === '1') {
+        window.__recTime = function(t) {
+          const vh = window.innerHeight;
+          const totalScroll = track.offsetHeight - vh;
+          window.scrollTo(0, t * totalScroll);
+          return curTime;
+        };
+      }
+    })();
+  </script>
+</body>
+</html>
+
